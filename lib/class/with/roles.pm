@@ -16,15 +16,24 @@ sub import {
     my $class = shift;
     $class =~ /\A\w+(\::\w+)*\z/ or die "Invalid class name syntax: $class";
 
+    my $do_class_import = 1;
     my @class_import_args;
     while (@_) {
-        last if $_[0] =~ /\A\+./;
+        if ($_[0] eq '!') {
+            $do_class_import = 0;
+            shift;
+            last;
+        } elsif ($_[0] =~ /\A\+./) {
+            last;
+        }
         push @class_import_args, shift;
     }
     (my $class_pm = "$class.pm") =~ s!::!/!g;
     require $class_pm;
-    eval "package $caller; $class->import(\@class_import_args);";
-    die if $@;
+    if ($do_class_import) {
+        eval "package $caller; $class->import(\@class_import_args);";
+        die if $@;
+    }
 
     my @roles;
     while (@_) {
@@ -47,20 +56,23 @@ sub import {
 
 =head1 SYNOPSIS
 
-Use mainly for the command line:
+To be used mainly from the command line:
 
  % perl -Mclass::with::roles=MyClass,+My::Role1,+My::Role2 -E'...'
  % perl -Mclass::with::roles=MyClass,import1,import2,+My::Role1,+My::Role2 -E'...'
+ % perl -Mclass::with::roles=MyClass,'!',+My::Role1,+My::Role2 -E'...'
 
 which is shortcut for:
 
  % perl -E'use MyClass;                      use Role::Tiny; Role::Tiny->apply_roles_to_package("MyClass", "My::Role1", "My::Role2"); ...'
  % perl -E'use MyClass "import1", "import2"; use Role::Tiny; Role::Tiny->apply_roles_to_package("MyClass", "My::Role1", "My::Role2"); ...'
+ % perl -E'use MyClass ();                   use Role::Tiny; Role::Tiny->apply_roles_to_package("MyClass", "My::Role1", "My::Role2"); ...'
 
 but you can also use it from regular Perl code:
 
  use class::with::roles MyClass => '+My::Role1', '+My::Role2';
  use class::with::roles MyClass => 'import1', 'import2', '+My::Role1', '+My::Role2';
+ use class::with::roles MyClass => '!', '+My::Role1', '+My::Role2';
 
 
 =head1 DESCRIPTION
