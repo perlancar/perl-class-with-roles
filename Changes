@@ -1,3 +1,8 @@
+0.003   2020-06-05  Released-By: PERLANCAR; Urgency: medium
+
+	- [bugfix] Derp, used the wrong invocant.
+
+
 0.002   2020-06-05  Released-By: PERLANCAR; Urgency: medium
 
 	- [bugfix] Oops, pass the wrong import arguments to class.
