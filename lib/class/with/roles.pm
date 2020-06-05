@@ -5,8 +5,8 @@ package class::with::roles;
 # DIST
 # VERSION
 
-use strict 'subs', 'vars';
-use warnings;
+use strict;
+#use warnings;
 
 sub import {
     my $package = shift;
@@ -14,7 +14,7 @@ sub import {
     my $class = shift;
     my @class_import_args;
     while (@_) {
-        last unless $_[0] =~ /\A\+./;
+        last if $_[0] =~ /\A\+./;
         push @class_import_args, shift;
     }
     (my $class_pm = "$class.pm") =~ s!::!/!g;
