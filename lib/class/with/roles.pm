@@ -19,7 +19,7 @@ sub import {
     }
     (my $class_pm = "$class.pm") =~ s!::!/!g;
     require $class_pm;
-    $class_pm->import(@class_import_args);
+    $class->import(@class_import_args);
 
     my @roles;
     while (@_) {
