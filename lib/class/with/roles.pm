@@ -14,6 +14,8 @@ sub import {
     my $caller = caller(0);
 
     my $class = shift;
+    $class =~ /\A\w+(\::\w+)*\z/ or die "Invalid class name syntax: $class";
+
     my @class_import_args;
     while (@_) {
         last if $_[0] =~ /\A\+./;
