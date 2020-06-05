@@ -11,6 +11,8 @@ use strict;
 sub import {
     my $package = shift;
 
+    my $caller = caller(0);
+
     my $class = shift;
     my @class_import_args;
     while (@_) {
@@ -19,7 +21,8 @@ sub import {
     }
     (my $class_pm = "$class.pm") =~ s!::!/!g;
     require $class_pm;
-    $class->import(@class_import_args);
+    eval "package $caller; $class->import(\@class_import_args);";
+    die if $@;
 
     my @roles;
     while (@_) {
